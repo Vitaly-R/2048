@@ -3,10 +3,7 @@ import sys
 
 
 def main():
-    size = 4
-    if 1 < len(sys.argv):
-        if sys.argv[1].isdigit():
-            size = int(sys.argv[1])
+    size = int(sys.argv[1]) if 1 < len(sys.argv) and sys.argv[1].isdigit() else 4
     game = Game(size)
     game.run()
 

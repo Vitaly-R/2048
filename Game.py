@@ -24,9 +24,9 @@ class Game:
         self.__board = np.ones((self.__BLOCKS, self.__BLOCKS)).astype(np.int)
         self.__init_start_blocks()
         self.__running = True
-        self.__start_screen = True
+        self.__start_screen = False
         self.__playing = False
-        self.__game_over = False
+        self.__game_over = True
 
     def __init_start_blocks(self):
         """
@@ -68,9 +68,9 @@ class Game:
             elif self.__playing:
                 self.__do_main_game_loop()
             elif self.__game_over:
-                pass
+                self.__do_game_over_loop()
             else:
-                pass
+                self.__do_respects_loop()
         self.__gui.end()
 
     def __do_start_screen_loop(self):
@@ -90,7 +90,11 @@ class Game:
         self.__gui.show_main_game_screen(self.__board)
         self.__check_game_over()
         if self.__playing:
-            self.__handle_events()
+            for event in self.__events:
+                if event.type == pygame.QUIT:
+                    self.__running = False
+                elif event.type == pygame.KEYDOWN and event.key in self.__moves.keys():
+                    self.__handle_movement(event)
 
     def __check_game_over(self):
         """
@@ -101,16 +105,6 @@ class Game:
                           True in [self.__board[i, j - 1] == self.__board[i, j] for i in range(self.__BLOCKS) for j in range(1, self.__BLOCKS)] or
                           True in [self.__board[i - 1, j] == self.__board[i, j] for j in range(self.__BLOCKS) for i in range(1, self.__BLOCKS)])
         self.__game_over = not self.__playing
-
-    def __handle_events(self):
-        """
-        Handles events during the game.
-        """
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.__running = False
-            elif event.type == pygame.KEYDOWN and event.key in self.__moves.keys():
-                self.__handle_movement(event)
 
     def __handle_movement(self, event):
         """
@@ -208,12 +202,12 @@ class Game:
         Each parameter is a tuple of a message and its position on the screen.
         """
         self.__gui.show_game_over_screen()
-        for event in pygame.event.get():
+        for event in self.__events:
             if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
                 self.__running = False
             elif event.type == pygame.KEYUP and event.key == pygame.K_r:
                 self.__restart_game()
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+            elif event.type == pygame.KEYUP and event.key == pygame.K_f:
                 self.__game_over = False
 
     def __restart_game(self):

@@ -65,8 +65,8 @@ class GUI:
 
     def show_respects_screen(self):
         self.__screen.blit(self.__respects_screen, (0, 0))
-        pygame.time.wait(2000)
         pygame.display.flip()
+        pygame.time.wait(2000)
 
     @staticmethod
     def end():
